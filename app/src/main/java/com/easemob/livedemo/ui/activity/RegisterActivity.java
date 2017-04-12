@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.easemob.livedemo.R;
+import com.easemob.livedemo.utils.MD5;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 
@@ -42,7 +43,7 @@ public class RegisterActivity extends BaseActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(username.getText()) || TextUtils.isEmpty(password.getText())){
+                if (TextUtils.isEmpty(username.getText()) || TextUtils.isEmpty(password.getText())) {
                     showToast("用户名和密码不能为空");
                     return;
                 }
@@ -54,7 +55,8 @@ public class RegisterActivity extends BaseActivity {
                     @Override
                     public void run() {
                         try {
-                            EMClient.getInstance().createAccount(username.getText().toString(), password.getText().toString());
+                            String md5Pass = MD5.getMessageDigest(password.getText().toString());
+                            EMClient.getInstance().createAccount(username.getText().toString(), md5Pass);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
