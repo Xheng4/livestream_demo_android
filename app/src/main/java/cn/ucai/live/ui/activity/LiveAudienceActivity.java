@@ -12,13 +12,14 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.ucai.live.LiveConstants;
 import cn.ucai.live.ThreadPoolManager;
 import cn.ucai.live.data.restapi.ApiManager;
 import cn.ucai.live.data.restapi.LiveException;
 import cn.ucai.live.data.restapi.model.StatisticsType;
 
 import com.bumptech.glide.Glide;
-import cn.ucai.live.DemoConstants;
+
 import cn.ucai.live.R;
 
 import cn.ucai.live.data.restapi.model.LiveStatusModule;
@@ -285,10 +286,10 @@ public class LiveAudienceActivity extends LiveBaseActivity implements UPlayerSta
     private void sendPraiseMessage(int praiseCount) {
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
         message.setTo(chatroomId);
-        EMCmdMessageBody cmdMessageBody = new EMCmdMessageBody(DemoConstants.CMD_PRAISE);
+        EMCmdMessageBody cmdMessageBody = new EMCmdMessageBody(LiveConstants.CMD_PRAISE);
         message.addBody(cmdMessageBody);
         message.setChatType(EMMessage.ChatType.ChatRoom);
-        message.setAttribute(DemoConstants.EXTRA_PRAISE_COUNT, praiseCount);
+        message.setAttribute(LiveConstants.EXTRA_PRAISE_COUNT, praiseCount);
         EMClient.getInstance().chatManager().sendMessage(message);
     }
 
