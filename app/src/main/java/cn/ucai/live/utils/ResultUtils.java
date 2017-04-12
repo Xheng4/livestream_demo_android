@@ -12,15 +12,15 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.ucai.superwechat.I;
-import cn.ucai.superwechat.bean.Pager;
-import cn.ucai.superwechat.bean.Result;
+import cn.ucai.live.I;
+import cn.ucai.live.data.model.Result;
+
 
 /**
  * Created by clawpo on 2016/9/21.
  */
 public class ResultUtils {
-    public static <T> Result getResultFromJson(String jsonStr,Class<T> clazz){
+    public static <T> Result getResultFromJson(String jsonStr, Class<T> clazz){
         Result result = new Result();
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
@@ -80,7 +80,7 @@ public class ResultUtils {
         return  null;
     }
 
-    public static <T> Result getPageResultFromJson(String jsonStr,Class<T> clazz){
+    /*public static <T> Result getPageResultFromJson(String jsonStr,Class<T> clazz){
         Result result = new Result();
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
@@ -109,5 +109,5 @@ public class ResultUtils {
             e.printStackTrace();
         }
         return  null;
-    }
+    }*/
 }
