@@ -80,6 +80,9 @@ public class LiveListFragment extends Fragment {
 
     }
 
+    private void loadGiftList() {
+        ApiManager.get().getAllGifts();
+    }
 
     private void showLiveList(final boolean isLoadMore){
         if(!isLoadMore)
@@ -87,6 +90,9 @@ public class LiveListFragment extends Fragment {
         else
             loadmorePB.setVisibility(View.VISIBLE);
         isLoading = true;
+
+        loadGiftList();
+
         ThreadPoolManager.getInstance().executeTask(new ThreadPoolManager.Task<ResponseModule<List<LiveRoom>>>() {
             @Override public ResponseModule<List<LiveRoom>> onRequest() throws HyphenateException {
                 if(!isLoadMore){
