@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import cn.ucai.live.R;
 import cn.ucai.live.utils.MD5;
+import cn.ucai.live.utils.PreferenceManager;
+
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 
@@ -73,7 +75,9 @@ public class LoginActivity extends BaseActivity {
         startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
       }
     });
-
+      if (PreferenceManager.getInstance().getCurrentUsername() != null) {
+          mEmailView.setText(PreferenceManager.getInstance().getCurrentUsername());
+      }
 
   }
 
@@ -173,5 +177,12 @@ public class LoginActivity extends BaseActivity {
     }
   }
 
+  @Override
+  protected void onResume() {
+    if (PreferenceManager.getInstance().getCurrentUsername() != null) {
+      mEmailView.setText(PreferenceManager.getInstance().getCurrentUsername());
+    }
+    super.onResume();
+  }
 }
 

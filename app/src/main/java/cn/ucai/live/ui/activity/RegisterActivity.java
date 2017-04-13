@@ -23,6 +23,7 @@ import cn.ucai.live.data.model.Result;
 import cn.ucai.live.data.model.UserModel;
 import cn.ucai.live.utils.CommonUtils;
 import cn.ucai.live.utils.MD5;
+import cn.ucai.live.utils.PreferenceManager;
 import cn.ucai.live.utils.ResultUtils;
 
 public class RegisterActivity extends BaseActivity {
@@ -104,7 +105,7 @@ public class RegisterActivity extends BaseActivity {
             password2.setError(getString(R.string.confirm_password_connot_be_empty));
             return false;
         }
-        if (!password.equals(mPassword2)) {
+        if (!mPassword.equals(mPassword2)) {
             password2.requestFocus();
             password2.setError(getString(R.string.two_input_password));
             return false;
@@ -113,7 +114,6 @@ public class RegisterActivity extends BaseActivity {
     }
     private void registerWeChat() {
         Log.e("register", "registerWeChat()");
-        pdialog();
         mModel.register(RegisterActivity.this, mUserName, mNick, MD5.getMessageDigest(mPassword),
                 new OnCompleteListener<String>() {
                     @Override
@@ -133,13 +133,17 @@ public class RegisterActivity extends BaseActivity {
                                 }
                             }
                         }
-                        pd.dismiss();
+                        if (pd != null) {
+                            pd.dismiss();
+                        }
                     }
 
                     @Override
                     public void onError(String error) {
                         CommonUtils.showShortToast(R.string.Registration_failed);
-                        pd.dismiss();
+                        if (pd != null) {
+                            pd.dismiss();
+                        }
                     }
                 }
         );
@@ -154,8 +158,8 @@ public class RegisterActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            pd.dismiss();
                             showToast("注册成功");
+                            PreferenceManager.getInstance().setCurrentUserName(mUserName);
                             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                             finish();
                         }
@@ -166,7 +170,6 @@ public class RegisterActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            pd.dismiss();
                             showLongToast("注册失败：" + e.getMessage());
                         }
                     });
@@ -191,4 +194,11 @@ public class RegisterActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (pd != null) {
+            pd.dismiss();
+        }
+    }
 }
