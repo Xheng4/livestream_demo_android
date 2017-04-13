@@ -154,7 +154,7 @@ public class UserProfileManager {
 	}
 
 
-	public void asyncGetCurrentWeChatUserInfo() {
+	public void asyncGetCurrentAppUserInfo() {
 		L.e("asyncGetCurrentWeChatUserInfo");
 		mModel.loadUserInfo(appContext, EMClient.getInstance().getCurrentUser(), new OnCompleteListener<String>() {
 			@Override
