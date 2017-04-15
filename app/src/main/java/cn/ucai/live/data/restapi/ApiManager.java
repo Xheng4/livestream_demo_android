@@ -11,7 +11,10 @@ import cn.ucai.live.data.model.Result;
 import cn.ucai.live.data.restapi.model.LiveStatusModule;
 import cn.ucai.live.data.restapi.model.ResponseModule;
 import cn.ucai.live.data.restapi.model.StatisticsType;
+
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.domain.User;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -22,8 +25,10 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,16 +44,16 @@ public class ApiManager {
     private String appkey;
     private ApiService apiService;
 
-    private static  ApiManager instance;
+    private static ApiManager instance;
 
     private LiveService mLiveService;
 
-    private ApiManager(){
+    private ApiManager() {
         try {
             ApplicationInfo appInfo = LiveApplication.getInstance().getPackageManager().getApplicationInfo(
                     LiveApplication.getInstance().getPackageName(), PackageManager.GET_META_DATA);
             appkey = appInfo.metaData.getString("EASEMOB_APPKEY");
-            appkey = appkey.replace("#","/");
+            appkey = appkey.replace("#", "/");
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException("must set the easemob appkey");
         }
@@ -61,7 +66,7 @@ public class ApiManager {
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://a1.easemob.com/"+appkey+"/")
+                .baseUrl("http://a1.easemob.com/" + appkey + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(httpClient)
                 .build();
@@ -74,34 +79,55 @@ public class ApiManager {
                 .client(httpClient)
                 .build();
         mLiveService = retrofit1.create(LiveService.class);
-
     }
 
-    public void getAllGifts() {
+    public List<Gift> getAllGifts() throws IOException {
         Call<String> call = mLiveService.getAllGifts();
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                String s = response.body();
-                Result result = ResultUtils.getListResultFromJson(s, Gift.class);
-                if (result != null && result.isRetMsg()) {
-                    List<Gift> list = (List<Gift>) result.getRetData();
-                    for (Gift gift : list) {
-                        L.e("gift", "gift:" + gift);
-                    }
-                }
-            }
+        Result<List<Gift>> result = responseToResultList(call, Gift.class);
+        if (result != null && result.isRetMsg()) {
+            return result.getRetData();
+        }
+        return null;
+    }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                L.e("gift","onFailure:call="+call+",Throwable="+t);
+    public User loadUserInfo(String userName) throws IOException {
+        User user = null;
+        Call<String> call = mLiveService.loadUserInfo(userName);
+        Result<User> result = responseToResult(call, User.class);
+        if (result != null && result.isRetMsg()) {
+            user = result.getRetData();
+        }
+        return user;
+    }
+
+    private <T> Result<T> responseToResult(Call<String> call, Class<T> tClass) throws IOException {
+        Response<String> response = call.execute();
+        if (response.isSuccessful()) {
+            try {
+                throw new LiveException(response.code(), response.errorBody().string());
+            } catch (LiveException e) {
+                e.printStackTrace();
             }
-        });
+        }
+        return ResultUtils.getResultFromJson(response.body(), tClass);
+    }
+
+    private <T> Result<List<T>> responseToResultList(Call<String> call, Class<T> tClass) throws IOException {
+        Response<String> response = call.execute();
+        if (response.isSuccessful()) {
+            try {
+                throw new LiveException(response.code(), response.errorBody().string());
+            } catch (LiveException e) {
+                e.printStackTrace();
+            }
+        }
+        return ResultUtils.getListResultFromJson(response.body(), tClass);
     }
 
     static class RequestInterceptor implements Interceptor {
 
-        @Override public okhttp3.Response intercept(Chain chain) throws IOException {
+        @Override
+        public okhttp3.Response intercept(Chain chain) throws IOException {
             Request original = chain.request();
             Request request = original.newBuilder()
                     .header("Authorization", "Bearer " + EMClient.getInstance().getAccessToken())
@@ -109,13 +135,13 @@ public class ApiManager {
                     .header("Content-Type", "application/json")
                     .method(original.method(), original.body())
                     .build();
-            okhttp3.Response response =  chain.proceed(request);
+            okhttp3.Response response = chain.proceed(request);
             return response;
         }
     }
 
-    public static ApiManager get(){
-        if(instance == null){
+    public static ApiManager get() {
+        if (instance == null) {
             instance = new ApiManager();
         }
         return instance;
@@ -138,17 +164,17 @@ public class ApiManager {
         liveRoom.setCover(coverUrl);
 
         Call<ResponseModule<LiveRoom>> responseCall;
-        if(liveRoomId != null){
+        if (liveRoomId != null) {
             responseCall = apiService.createLiveShow(liveRoomId, liveRoom);
 
-        }else {
+        } else {
             responseCall = apiService.createLiveRoom(liveRoom);
         }
         ResponseModule<LiveRoom> response = handleResponseCall(responseCall).body();
         LiveRoom room = response.data;
-        if(room.getId() != null) {
+        if (room.getId() != null) {
             liveRoom.setId(room.getId());
-        }else {
+        } else {
             liveRoom.setId(liveRoomId);
         }
         liveRoom.setChatroomId(room.getChatroomId());
@@ -172,7 +198,6 @@ public class ApiManager {
     }
 
 
-
     //public void joinLiveRoom(String roomId, String userId) throws LiveException {
     //    JSONObject jobj = new JSONObject();
     //    String[] arr = new String[]{userId};
@@ -184,7 +209,6 @@ public class ApiManager {
     //    }
     //    handleResponseCall(apiService.joinLiveRoom(roomId, jsonToRequestBody(jobj.toString())));
     //}
-
 
 
     //public void updateLiveRoom(LiveRoom liveRoom) throws LiveException {
@@ -276,10 +300,10 @@ public class ApiManager {
         handleResponseCall(apiService.postStatistics(roomId, jsonToRequestBody(jobj.toString())));
     }
 
-    private <T> Response<T>handleResponseCall(Call<T> responseCall) throws LiveException{
+    private <T> Response<T> handleResponseCall(Call<T> responseCall) throws LiveException {
         try {
             Response<T> response = responseCall.execute();
-            if(!response.isSuccessful()){
+            if (!response.isSuccessful()) {
                 throw new LiveException(response.code(), response.errorBody().string());
             }
             return response;
@@ -288,7 +312,7 @@ public class ApiManager {
         }
     }
 
-    private RequestBody jsonToRequestBody(String jsonStr){
+    private RequestBody jsonToRequestBody(String jsonStr) {
         return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonStr);
     }
 }

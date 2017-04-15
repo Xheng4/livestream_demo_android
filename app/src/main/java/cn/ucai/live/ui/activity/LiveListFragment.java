@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.data.restapi.model.ResponseModule;
 
@@ -24,7 +25,11 @@ import cn.ucai.live.R;
 import cn.ucai.live.ThreadPoolManager;
 import cn.ucai.live.data.restapi.ApiManager;
 import cn.ucai.live.ui.GridMarginDecoration;
+import cn.ucai.live.utils.L;
+
 import com.hyphenate.exceptions.HyphenateException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +86,21 @@ public class LiveListFragment extends Fragment {
     }
 
     private void loadGiftList() {
-        ApiManager.get().getAllGifts();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<Gift> gifts = ApiManager.get().getAllGifts();
+                    if (gifts != null) {
+                        for (Gift gift : gifts) {
+                            L.e("gift","gift:"+gift);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void showLiveList(final boolean isLoadMore){
