@@ -73,4 +73,11 @@ public class DBManager {
         return gifts;
     }
 
+    public synchronized void closeDB() {
+        if (dbHelper != null) {
+            dbHelper.closeDB();
+        }
+        manager = null;
+    }
+
 }

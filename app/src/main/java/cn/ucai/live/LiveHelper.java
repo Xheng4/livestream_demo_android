@@ -8,6 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
@@ -20,9 +21,17 @@ import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.util.EMLog;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import cn.ucai.live.data.UserProfileManager;
+import cn.ucai.live.data.db.DBManager;
+import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.data.model.IUserModel;
 import cn.ucai.live.data.model.UserModel;
+import cn.ucai.live.data.restapi.ApiManager;
 import cn.ucai.live.ui.activity.MainActivity;
 import cn.ucai.live.utils.PreferenceManager;
 
@@ -53,6 +62,8 @@ public class LiveHelper {
     private LocalBroadcastManager broadcastManager;
 
     private EMConnectionListener connectionListener;
+
+    private Map<Integer, Gift> giftList;
 
     private LiveHelper() {
     }
@@ -266,6 +277,33 @@ public class LiveHelper {
 
     synchronized void reset() {
         getUserProfileManager().reset();
+        DBManager.getInstance().closeDB();
+    }
+
+    public Map<Integer, Gift> getGiftList() {
+        if (giftList == null) {
+            giftList = mLiveModel.getGiftList()==null? mLiveModel.getGiftList(): new HashMap<Integer, Gift>();
+        }
+        return giftList;
+    }
+
+    public void syncGiftList() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<Gift> list = ApiManager.get().getAllGifts();
+                    if (list != null && list.size() > 0) {
+                        mLiveModel.setGiftList(list);
+                        for (Gift gift : list) {
+                            getGiftList().put(gift.getId(), gift);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
 }

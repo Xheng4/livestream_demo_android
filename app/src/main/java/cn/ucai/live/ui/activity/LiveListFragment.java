@@ -110,7 +110,7 @@ public class LiveListFragment extends Fragment {
             loadmorePB.setVisibility(View.VISIBLE);
         isLoading = true;
 
-        loadGiftList();
+//        loadGiftList();
 
         ThreadPoolManager.getInstance().executeTask(new ThreadPoolManager.Task<ResponseModule<List<LiveRoom>>>() {
             @Override public ResponseModule<List<LiveRoom>> onRequest() throws HyphenateException {

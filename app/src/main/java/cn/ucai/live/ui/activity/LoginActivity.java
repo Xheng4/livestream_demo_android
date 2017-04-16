@@ -125,14 +125,17 @@ public class LoginActivity extends BaseActivity {
       showProgress(true);
       final String mUserName = email.toString().trim();
       EMClient.getInstance().login(mUserName, MD5.getMessageDigest(password.toString()), new EMCallBack() {
-        @Override public void onSuccess() {
+        @Override
+        public void onSuccess() {
           PreferenceManager.getInstance().setCurrentUserName(EMClient.getInstance().getCurrentUser());
           LiveHelper.getInstance().getUserProfileManager().asyncGetCurrentAppUserInfo();
+          LiveHelper.getInstance().syncGiftList();
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
         }
 
-        @Override public void onError(int i, final String s) {
+        @Override
+        public void onError(int i, final String s) {
           runOnUiThread(new Runnable() {
             @Override
             public void run() {
