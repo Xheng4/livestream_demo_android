@@ -103,6 +103,7 @@ public class ApiManager {
         Call<String> call = mLiveService.createLiveRoom(auth, name, description, owner, maxusers, members);
         try {
             String body = call.execute().body();
+            L.e("create","createLiveRoom body:"+body);
             return ResultUtils.getResultFromJson(body);
         } catch (IOException e) {
             e.printStackTrace();
@@ -110,6 +111,7 @@ public class ApiManager {
         return null;
     }
     public String createLiveRoom(String name,String description) {
+        L.e("create","createLiveRoom:"+name+","+description);
         String user = EMClient.getInstance().getCurrentUser();
         return createLiveRoom("1IFgE",name,description, user,300,user);
 
@@ -117,7 +119,7 @@ public class ApiManager {
 
     private <T> Result<T> responseToResult(Call<String> call, Class<T> tClass) throws IOException {
         Response<String> response = call.execute();
-        if (response.isSuccessful()) {
+        if (!response.isSuccessful()) {
             try {
                 throw new LiveException(response.code(), response.errorBody().string());
             } catch (LiveException e) {
@@ -129,7 +131,7 @@ public class ApiManager {
 
     private <T> Result<List<T>> responseToResultList(Call<String> call, Class<T> tClass) throws IOException {
         Response<String> response = call.execute();
-        if (response.isSuccessful()) {
+        if (!response.isSuccessful()) {
             try {
                 throw new LiveException(response.code(), response.errorBody().string());
             } catch (LiveException e) {
@@ -180,7 +182,7 @@ public class ApiManager {
 
         //id代替room.getId
         String id = createLiveRoom(name, description);
-        L.e("chatRoom", "creat id:" + id);
+        L.e("create", "creat id:" + id);
         if (id != null) {
             liveRoom.setId(id);
             liveRoom.setChatroomId(id);
@@ -328,8 +330,9 @@ public class ApiManager {
 
     private <T> Response<T> handleResponseCall(Call<T> responseCall) throws LiveException {
         try {
+            L.e("chatRoom","responseCall:"+responseCall.toString());
             Response<T> response = responseCall.execute();
-            L.e("chatRoom","respomse:"+response.toString());
+            L.e("chatRoom","response:"+response.toString());
             if (!response.isSuccessful()) {
                 throw new LiveException(response.code(), response.errorBody().string());
             }

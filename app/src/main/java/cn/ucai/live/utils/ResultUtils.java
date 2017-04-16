@@ -111,11 +111,14 @@ public class ResultUtils {
         return  null;
     }*/
     public static String getResultFromJson(String jsonStr){
+        L.e("create","getResultFromJson");
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
-            if(!jsonObject.isNull("Data")) {
-                JSONObject jsonRetData = jsonObject.getJSONObject("Data");
+            if(!jsonObject.isNull("data")) {
+                JSONObject jsonRetData = jsonObject.getJSONObject("data");
+                L.e("create","jsonRetData:"+jsonRetData.toString());
                 if (!jsonRetData.isNull("id")) {
+                    L.e("create","jsonRetData(id):"+jsonRetData.getString("id"));
                     return jsonRetData.getString("id");
                 }
             }
