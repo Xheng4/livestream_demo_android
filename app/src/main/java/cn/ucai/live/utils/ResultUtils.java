@@ -110,4 +110,19 @@ public class ResultUtils {
         }
         return  null;
     }*/
+    public static String getResultFromJson(String jsonStr){
+        try {
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            if(!jsonObject.isNull("Data")) {
+                JSONObject jsonRetData = jsonObject.getJSONObject("Data");
+                if (!jsonRetData.isNull("id")) {
+                    return jsonRetData.getString("id");
+                }
+            }
+            return null;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return  null;
+    }
 }

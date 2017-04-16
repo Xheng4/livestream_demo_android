@@ -99,6 +99,21 @@ public class ApiManager {
         }
         return user;
     }
+    public String createLiveRoom(String auth,String name,String description,String owner,int maxusers,String members) {
+        Call<String> call = mLiveService.createLiveRoom(auth, name, description, owner, maxusers, members);
+        try {
+            String body = call.execute().body();
+            return ResultUtils.getResultFromJson(body);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public String createLiveRoom(String name,String description) {
+        String user = EMClient.getInstance().getCurrentUser();
+        return createLiveRoom("1IFgE",name,description, user,300,user);
+
+    }
 
     private <T> Result<T> responseToResult(Call<String> call, Class<T> tClass) throws IOException {
         Response<String> response = call.execute();
@@ -163,24 +178,35 @@ public class ApiManager {
         liveRoom.setAnchorId(EMClient.getInstance().getCurrentUser());
         liveRoom.setCover(coverUrl);
 
-        Call<ResponseModule<LiveRoom>> responseCall;
-        if (liveRoomId != null) {
-            responseCall = apiService.createLiveShow(liveRoomId, liveRoom);
-
-        } else {
-            responseCall = apiService.createLiveRoom(liveRoom);
-        }
-        ResponseModule<LiveRoom> response = handleResponseCall(responseCall).body();
-        LiveRoom room = response.data;
-        if (room.getId() != null) {
-            liveRoom.setId(room.getId());
+        //id代替room.getId
+        String id = createLiveRoom(name, description);
+        L.e("chatRoom", "creat id:" + id);
+        if (id != null) {
+            liveRoom.setId(id);
+            liveRoom.setChatroomId(id);
         } else {
             liveRoom.setId(liveRoomId);
         }
-        liveRoom.setChatroomId(room.getChatroomId());
-        //liveRoom.setAudienceNum(1);
-        liveRoom.setLivePullUrl(room.getLivePullUrl());
-        liveRoom.setLivePushUrl(room.getLivePushUrl());
+
+
+//        Call<ResponseModule<LiveRoom>> responseCall;
+//        if (liveRoomId != null) {
+//            responseCall = apiService.createLiveShow(liveRoomId, liveRoom);
+//
+//        } else {
+//            responseCall = apiService.createLiveRoom(liveRoom);
+//        }
+//        ResponseModule<LiveRoom> response = handleResponseCall(responseCall).body();
+//        LiveRoom room = response.data;
+//        if (room.getId() != null) {
+//            liveRoom.setId(room.getId());
+//        } else {
+//            liveRoom.setId(liveRoomId);
+//        }
+//        liveRoom.setChatroomId(room.getChatroomId());
+//        //liveRoom.setAudienceNum(1);
+//        liveRoom.setLivePullUrl(room.getLivePullUrl());
+//        liveRoom.setLivePushUrl(room.getLivePushUrl());
         return liveRoom;
     }
 
@@ -303,6 +329,7 @@ public class ApiManager {
     private <T> Response<T> handleResponseCall(Call<T> responseCall) throws LiveException {
         try {
             Response<T> response = responseCall.execute();
+            L.e("chatRoom","respomse:"+response.toString());
             if (!response.isSuccessful()) {
                 throw new LiveException(response.code(), response.errorBody().string());
             }
