@@ -113,7 +113,8 @@ public class ApiManager {
     public String createLiveRoom(String name,String description) {
         L.e("create","createLiveRoom:"+name+","+description);
         String user = EMClient.getInstance().getCurrentUser();
-        return createLiveRoom("1IFgE",name,description, user,300,user);
+        //添加一些模拟用户加入直播间
+        return createLiveRoom("1IFgE",name,description, user,300,user+",xsh001,xsh002,xsh003,xsh004,xsh005");
 
     }
 

@@ -17,6 +17,7 @@ import butterknife.OnClick;
 import cn.ucai.live.LiveConstants;
 import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.data.restapi.model.StatisticsType;
+import cn.ucai.live.utils.L;
 import cn.ucai.live.utils.Utils;
 
 import com.bumptech.glide.Glide;
@@ -394,6 +395,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
                     chatroom = EMClient.getInstance()
                             .chatroomManager()
                             .fetchChatRoomFromServer(chatroomId, true);
+                    L.e("text", "chatroom:" + chatroom.toString());
                     memberList.clear();
                     List<String> tempList = new ArrayList<>();
                     tempList.addAll(chatroom.getAdminList());
@@ -541,10 +543,11 @@ public abstract class LiveBaseActivity extends BaseActivity {
                 }
             });
             //暂时使用测试数据
-            Glide.with(context)
-                    .load(avatarRepository.getAvatar())
-                    .placeholder(R.drawable.ease_default_avatar)
-                    .into(holder.Avatar);
+            EaseUserUtils.setAppUserAvatar(context,namelist.get(position),holder.Avatar);
+//            Glide.with(context)
+//                    .load(avatarRepository.getAvatar())
+//                    .placeholder(R.drawable.ease_default_avatar)
+//                    .into(holder.Avatar);
         }
 
         @Override public int getItemCount() {
