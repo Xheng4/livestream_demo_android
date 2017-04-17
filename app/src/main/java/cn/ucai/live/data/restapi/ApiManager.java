@@ -117,6 +117,29 @@ public class ApiManager {
 
     }
 
+    public void deleteChatRoom(String id) {
+        Call<String> call = mLiveService.deleteChatRoom("1IFgE", id);
+//        try {
+//            String body = call.execute().body();
+//            return ResultUtils.getResultBooleanFromJson(body);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                boolean isDelChatRoom = ResultUtils.getResultBooleanFromJson(response.body());
+                L.e("delete","isDelChatRoom："+isDelChatRoom);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                L.e("delete","onFailure："+t.toString());
+            }
+        });
+//        return false;
+    }
+
     private <T> Result<T> responseToResult(Call<String> call, Class<T> tClass) throws IOException {
         Response<String> response = call.execute();
         if (!response.isSuccessful()) {

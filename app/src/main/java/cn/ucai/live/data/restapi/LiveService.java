@@ -27,4 +27,11 @@ public interface LiveService {
             @Query("maxusers")int maxusers,
             @Query("members") String members
     );
+
+    @GET(I.REQUEST_DELETE_CHATROOM)
+    Call<String> deleteChatRoom(
+            @Query("auth") String auth,
+            @Query("chatRoomId") String chatRoomId
+    );
+
 }

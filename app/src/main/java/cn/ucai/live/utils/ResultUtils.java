@@ -128,4 +128,21 @@ public class ResultUtils {
         }
         return  null;
     }
+    public static boolean getResultBooleanFromJson(String jsonStr){
+        L.e("create","getResultFromJson");
+        try {
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            if(!jsonObject.isNull("data")) {
+                JSONObject jsonRetData = jsonObject.getJSONObject("data");
+                L.e("create","jsonRetData:"+jsonRetData.toString());
+                if (!jsonRetData.isNull("success")) {
+                    return jsonRetData.getBoolean("success");
+                }
+            }
+            return false;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return  false;
+    }
 }
