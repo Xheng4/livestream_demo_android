@@ -1,16 +1,19 @@
 package com.hyphenate.easeui.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.R;
 import com.hyphenate.easeui.controller.EaseUI;
 import com.hyphenate.easeui.controller.EaseUI.EaseUserProfileProvider;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.domain.User;
+import com.hyphenate.easeui.widget.EaseImageView;
 
 public class EaseUserUtils {
 
@@ -131,5 +134,13 @@ public class EaseUserUtils {
                 textView.setText(user.getMUserName());
             }
         }
+    }
+
+    public static void setHostAvatar(Activity activity, EaseImageView ivAvatar) {
+        setAppUserAvatar(activity, EMClient.getInstance().getCurrentUser(),ivAvatar);
+    }
+
+    public static void setHostNick(TextView view) {
+        setAppUserNick(EMClient.getInstance().getCurrentUser(),view);
     }
 }
