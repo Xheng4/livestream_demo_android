@@ -395,7 +395,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
                     chatroom = EMClient.getInstance()
                             .chatroomManager()
                             .fetchChatRoomFromServer(chatroomId, true);
-                    L.e("text", "chatroom:" + chatroom.toString());
+                    L.e("test", "chatroom:" + chatroom.toString());
                     memberList.clear();
                     List<String> tempList = new ArrayList<>();
                     tempList.addAll(chatroom.getAdminList());
@@ -403,10 +403,12 @@ public abstract class LiveBaseActivity extends BaseActivity {
                     if (tempList.contains(chatroom.getOwner())) {
                         tempList.remove(chatroom.getOwner());
                     }
-                    if(tempList.size() > MAX_SIZE) {
-                        for (int i = 0; i < MAX_SIZE; i++){
+                    if (tempList.size() > MAX_SIZE) {
+                        for (int i = 0; i < MAX_SIZE; i++) {
                             memberList.add(i, tempList.get(i));
                         }
+                    } else {
+                        memberList.addAll(tempList);
                     }
                 } catch (HyphenateException e) {
                     e.printStackTrace();
@@ -543,6 +545,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
                 }
             });
             //暂时使用测试数据
+            L.e("test","AvatarAdapter,position:"+position);
             EaseUserUtils.setAppUserAvatar(context,namelist.get(position),holder.Avatar);
 //            Glide.with(context)
 //                    .load(avatarRepository.getAvatar())
