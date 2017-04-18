@@ -27,6 +27,9 @@ import cn.ucai.live.data.restapi.ApiManager;
 import cn.ucai.live.ui.GridMarginDecoration;
 import cn.ucai.live.utils.L;
 
+import com.hyphenate.chat.EMChatRoom;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMPageResult;
 import com.hyphenate.exceptions.HyphenateException;
 
 import java.io.IOException;
@@ -47,6 +50,7 @@ public class LiveListFragment extends Fragment {
     private boolean isLoading;
     private final List<LiveRoom> liveRoomList = new ArrayList<>();
     private PhotoAdapter adapter;
+    private boolean chatRoom;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -103,8 +107,11 @@ public class LiveListFragment extends Fragment {
         }).start();
     }
 
-    private void showLiveList(final boolean isLoadMore){
-        if(!isLoadMore)
+    private void showLiveList(final boolean isLoadMore) {
+        if (getChatRoom()) {
+            return;
+        }
+        if (!isLoadMore)
             swipeRefreshLayout.setRefreshing(true);
         else
             loadmorePB.setVisibility(View.VISIBLE);
@@ -113,38 +120,41 @@ public class LiveListFragment extends Fragment {
 //        loadGiftList();
 
         ThreadPoolManager.getInstance().executeTask(new ThreadPoolManager.Task<ResponseModule<List<LiveRoom>>>() {
-            @Override public ResponseModule<List<LiveRoom>> onRequest() throws HyphenateException {
-                if(!isLoadMore){
+            @Override
+            public ResponseModule<List<LiveRoom>> onRequest() throws HyphenateException {
+                if (!isLoadMore) {
                     cursor = null;
                 }
                 return ApiManager.get().getLivingRoomList(pageSize, cursor);
             }
 
-            @Override public void onSuccess(ResponseModule<List<LiveRoom>> listResponseModule) {
+            @Override
+            public void onSuccess(ResponseModule<List<LiveRoom>> listResponseModule) {
                 hideLoadingView(isLoadMore);
                 List<LiveRoom> returnList = listResponseModule.data;
-                if(returnList.size() < pageSize){
+                if (returnList.size() < pageSize) {
                     hasMoreData = false;
                     cursor = null;
-                }else{
+                } else {
                     hasMoreData = true;
                     cursor = listResponseModule.cursor;
                 }
 
-                if(!isLoadMore) {
+                if (!isLoadMore) {
                     liveRoomList.clear();
                 }
                 liveRoomList.addAll(returnList);
-                if(adapter == null){
+                if (adapter == null) {
                     adapter = new PhotoAdapter(getActivity(), liveRoomList);
                     recyclerView.setAdapter(adapter);
-                }else{
+                } else {
                     adapter.notifyDataSetChanged();
                 }
 
             }
 
-            @Override public void onError(HyphenateException exception) {
+            @Override
+            public void onError(HyphenateException exception) {
                 hideLoadingView(isLoadMore);
             }
         });
@@ -156,6 +166,57 @@ public class LiveListFragment extends Fragment {
             swipeRefreshLayout.setRefreshing(false);
         else
             loadmorePB.setVisibility(View.INVISIBLE);
+    }
+
+    public boolean getChatRoom() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int pageCount = 1;
+                EMPageResult<EMChatRoom> result;
+                try {
+                    result = EMClient.getInstance().chatroomManager().fetchPublicChatRoomsFromServer(0, 20);
+                    final List<EMChatRoom> chatRoomList = result.getData();
+                    pageCount = result.getPageCount();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (chatRoomList != null && chatRoomList.size() > 0) {
+                                for (EMChatRoom room : chatRoomList) {
+                                    LiveRoom liveRoom = chatRoom2LiveRoom(room);
+                                    if (liveRoom != null) {
+                                        liveRoomList.add(liveRoom);
+                                    }
+                                }
+                                if (adapter == null) {
+                                    adapter = new PhotoAdapter(getActivity(), liveRoomList);
+                                    recyclerView.setAdapter(adapter);
+                                } else {
+                                    adapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+                    });
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        return chatRoom;
+    }
+
+    private LiveRoom chatRoom2LiveRoom(EMChatRoom room) {
+        LiveRoom liveRoom = null;
+        if (room != null) {
+            liveRoom = new LiveRoom();
+            liveRoom.setId(room.getOwner());
+            liveRoom.setChatroomId(room.getId());
+            liveRoom.setName(room.getName());
+            liveRoom.setDescription(room.getDescription());
+            liveRoom.setAnchorId(room.getOwner());
+            liveRoom.setAudienceNum(room.getMemberCount());
+        }
+        return liveRoom;
     }
 
     static class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
