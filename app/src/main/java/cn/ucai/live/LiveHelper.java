@@ -1,14 +1,10 @@
 package cn.ucai.live;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
@@ -29,8 +25,6 @@ import java.util.Map;
 import cn.ucai.live.data.UserProfileManager;
 import cn.ucai.live.data.db.DBManager;
 import cn.ucai.live.data.model.Gift;
-import cn.ucai.live.data.model.IUserModel;
-import cn.ucai.live.data.model.UserModel;
 import cn.ucai.live.data.restapi.ApiManager;
 import cn.ucai.live.ui.activity.MainActivity;
 import cn.ucai.live.utils.PreferenceManager;
@@ -184,7 +178,7 @@ public class LiveHelper {
         // You'd better cache it if you get it from your server
         User user = null;
         if (username.equals(EMClient.getInstance().getCurrentUser()))
-            return getUserProfileManager().getCurrentWeChatUserInfo();
+            return getUserProfileManager().getCurrentAppUserInfo();
         // if user is not in your contacts, set inital letter for him/her
         if (user == null) {
             user = new User(username);

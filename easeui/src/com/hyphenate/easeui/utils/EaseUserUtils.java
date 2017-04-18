@@ -2,6 +2,7 @@ package com.hyphenate.easeui.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -89,7 +90,8 @@ public class EaseUserUtils {
      * @param user
      */
     public static void setAppUserAvatar(Context context, User user, ImageView imageView){
-        if(user != null){
+        Log.e("avatar", "setAppUserAvatar: userName=" + user.getMUserName());
+        if(user != null && user.getAvatar()!=null){
             setAvatar(context,user.getAvatar(),imageView);
         }else{
             Glide.with(context).load(R.drawable.default_hd_avatar).into(imageView);

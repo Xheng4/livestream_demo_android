@@ -81,7 +81,7 @@ public class UserProfileManager {
 		return currentUser;
 	}
 
-	public synchronized User getCurrentWeChatUserInfo() {
+	public synchronized User getCurrentAppUserInfo() {
 		if (mUser == null || mUser.getMUserName() == null) {
 			String username = EMClient.getInstance().getCurrentUser();
 			mUser = new User(username);
@@ -187,13 +187,13 @@ public class UserProfileManager {
 
 
 	private void setCurrentWeChatUserNick(String nickname) {
-		getCurrentWeChatUserInfo().setMUserNick(nickname);
+		getCurrentAppUserInfo().setMUserNick(nickname);
 		PreferenceManager.getInstance().setCurrentUserNick(nickname);
 	}
 
 	private void setCurrentWeChatUserAvatar(String avatar) {
 		L.e("loadUserInfo","avatar:"+avatar);
-		getCurrentWeChatUserInfo().setAvatar(avatar);
+		getCurrentAppUserInfo().setAvatar(avatar);
 		PreferenceManager.getInstance().setCurrentUserAvatar(avatar);
 	}
 

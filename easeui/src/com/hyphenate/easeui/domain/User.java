@@ -1,5 +1,7 @@
 package com.hyphenate.easeui.domain;
 
+import android.util.Log;
+
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 
 import java.io.Serializable;
@@ -101,7 +103,7 @@ public class User implements Serializable {
     }
 
     public String getMAvatarSuffix() {
-        return mavatarSuffix==null?".jpg":mavatarSuffix;
+        return mavatarSuffix==null?".png":mavatarSuffix;
     }
 
 //	public String getInitialLetter() {
