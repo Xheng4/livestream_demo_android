@@ -113,8 +113,13 @@ public abstract class LiveBaseActivity extends BaseActivity {
     }
 
     private void initInfo() {
-        EaseUserUtils.setHostAvatar(this,ivAvatar);
-        EaseUserUtils.setHostNick(usernameView);
+        if (anchorId.equals(EMClient.getInstance().getCurrentUser())) {
+            EaseUserUtils.setHostNick(usernameView);
+            EaseUserUtils.setHostAvatar(LiveBaseActivity.this, ivAvatar);
+        } else {
+            usernameView.setText(anchorId);
+            EaseUserUtils.setAppUserAvatar(LiveBaseActivity.this, anchorId, ivAvatar);
+        }
     }
 
     protected Handler handler = new Handler();
