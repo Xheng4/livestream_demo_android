@@ -212,7 +212,13 @@ public class LiveListFragment extends Fragment {
             liveRoom.setId(room.getOwner());
             liveRoom.setChatroomId(room.getId());
             liveRoom.setName(room.getName());
-            liveRoom.setDescription(room.getDescription());
+            int index = room.getDescription().indexOf("#live201612#");
+            L.e("list", "index=" + index );
+            String desc = room.getDescription().substring(0, index);
+            String cover = room.getDescription().substring(index+1);
+            L.e("list", "desc=" + desc + ",cover=" + cover);
+            liveRoom.setDescription(desc);
+            liveRoom.setCover("https://a1.easemod.com/i/superwechat201612/chatfiles/"+cover);
             liveRoom.setAnchorId(room.getOwner());
             liveRoom.setAudienceNum(room.getMemberCount());
         }

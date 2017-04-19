@@ -204,8 +204,10 @@ public class ApiManager {
         liveRoom.setAnchorId(EMClient.getInstance().getCurrentUser());
         liveRoom.setCover(coverUrl);
 
+        String cover = coverUrl.substring(coverUrl.lastIndexOf("/") + 1);
+        String desc = description + "#live201612#" + cover;
         //id代替room.getId
-        String id = createLiveRoom(name, description);
+        String id = createLiveRoom(name, desc);
         L.e("create", "creat id:" + id);
         if (id != null) {
             liveRoom.setId(id);
