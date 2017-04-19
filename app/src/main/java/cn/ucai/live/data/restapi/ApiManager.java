@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 
 import cn.ucai.live.I;
 import cn.ucai.live.LiveApplication;
+import cn.ucai.live.LiveConstants;
 import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.data.model.Result;
@@ -114,7 +115,7 @@ public class ApiManager {
         L.e("create","createLiveRoom:"+name+","+description);
         String user = EMClient.getInstance().getCurrentUser();
         //添加一些模拟用户加入直播间
-        return createLiveRoom("1IFgE",name,description, user,300,user+",xsh001,xsh002,xsh003,xsh004,xsh005,xsh006");
+        return createLiveRoom("1IFgE",name,description, user,300,user);
 
     }
 
@@ -205,9 +206,10 @@ public class ApiManager {
         liveRoom.setCover(coverUrl);
 
         String cover = coverUrl.substring(coverUrl.lastIndexOf("/") + 1);
-        String desc = description + "#live201612#" + cover;
+//        String desc = description + "#live201612#" + cover;
+        String nameCover = name+ LiveConstants.LIVE_COVER+cover;
         //id代替room.getId
-        String id = createLiveRoom(name, desc);
+        String id = createLiveRoom(nameCover, description);
         L.e("create", "creat id:" + id);
         if (id != null) {
             liveRoom.setId(id);
