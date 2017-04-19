@@ -76,7 +76,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
     @BindView(R.id.tv_username) TextView usernameView;
 
     @BindView(R.id.iv_avatar) EaseImageView ivAvatar;
-    @BindView(R.id.iv_gift_image) ImageView giftImageView;
+    @BindView(R.id.gift_image) ImageView giftImageView;
 
     protected String anchorId;
 
@@ -516,7 +516,8 @@ public abstract class LiveBaseActivity extends BaseActivity {
         managementDialog.show(getSupportFragmentManager(), "RoomUserManagementDialog");
     }
 
-    @OnClick(R.id.iv_gift_image) void showGiftList(){
+    @OnClick(R.id.gift_image) void showGiftList(){
+        L.e("showGift","showGiftList");
         RoomGiftListDialog giftListDialog = RoomGiftListDialog.newInstance();
         giftListDialog.setEventListener(new View.OnClickListener() {
             @Override
