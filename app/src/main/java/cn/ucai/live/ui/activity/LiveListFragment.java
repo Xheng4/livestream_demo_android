@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.ucai.live.LiveConstants;
 import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.data.restapi.model.ResponseModule;
@@ -181,6 +182,7 @@ public class LiveListFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            swipeRefreshLayout.setRefreshing(false);
                             if (chatRoomList != null && chatRoomList.size() > 0) {
                                 for (EMChatRoom room : chatRoomList) {
                                     LiveRoom liveRoom = chatRoom2LiveRoom(room);
@@ -212,14 +214,14 @@ public class LiveListFragment extends Fragment {
             liveRoom.setId(room.getOwner());
             liveRoom.setChatroomId(room.getId());
             liveRoom.setName(room.getName());
-            int index = room.getName().indexOf("#live201612#");
+            int index = room.getName().indexOf(LiveConstants.LIVE_COVER);
             if (index > 0) {
                 L.e("list", "index=" + index);
-                String desc = room.getName().substring(0, index);
-                String cover = room.getName().substring(index + 1);
-                L.e("list", "desc=" + desc + ",cover=" + cover);
-                liveRoom.setName(desc);
-                liveRoom.setCover("https://a1.easemod.com/i/superwechat201612/chatfiles/" + cover);
+                String name = room.getName().substring(0, index);
+                String cover = room.getName().substring(index + LiveConstants.LIVE_COVER.length());
+                L.e("list", "name=" + name + ",cover=" + cover);
+                liveRoom.setName(name);
+                liveRoom.setCover(LiveConstants.LIVE_COVER_PREFIX + cover);
             } else {
                 liveRoom.setName(room.getName());
             }
