@@ -18,7 +18,11 @@ import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.util.EMLog;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +61,8 @@ public class LiveHelper {
 
     private EMConnectionListener connectionListener;
 
-    private Map<Integer, Gift> giftList;
+    private Map<Integer, Gift> giftMap;
+    private List<Gift> giftList;
 
     private LiveHelper() {
     }
@@ -274,9 +279,31 @@ public class LiveHelper {
         DBManager.getInstance().closeDB();
     }
 
-    public Map<Integer, Gift> getGiftList() {
+    public Map<Integer, Gift> getGiftMap() {
+        if (giftMap == null) {
+            giftMap = mLiveModel.getGiftList()==null? mLiveModel.getGiftList(): new HashMap<Integer, Gift>();
+        }
+        return giftMap;
+    }
+
+    public List<Gift> getGiftList() {
+        if (giftMap == null) {
+            if (getGiftMap().size() > 0) {
+                giftList = new ArrayList<>();
+                Iterator<Map.Entry<Integer, Gift>> iterator = giftMap.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    giftList.add(iterator.next().getValue());
+                }
+                Collections.sort(giftList, new Comparator<Gift>() {
+                    @Override
+                    public int compare(Gift o1, Gift o2) {
+                        return o1.getGprice().compareTo(o2.getGprice());
+                    }
+                });
+            }
+        }
         if (giftList == null) {
-            giftList = mLiveModel.getGiftList()==null? mLiveModel.getGiftList(): new HashMap<Integer, Gift>();
+            giftList = new ArrayList<>();
         }
         return giftList;
     }
@@ -290,7 +317,7 @@ public class LiveHelper {
                     if (list != null && list.size() > 0) {
                         mLiveModel.setGiftList(list);
                         for (Gift gift : list) {
-                            getGiftList().put(gift.getId(), gift);
+                            getGiftMap().put(gift.getId(), gift);
                         }
                     }
                 } catch (IOException e) {
