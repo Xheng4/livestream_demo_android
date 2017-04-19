@@ -105,9 +105,9 @@ public class RoomGiftListDialog extends DialogFragment {
         unbinder.unbind();
     }
 
-    private RoomManageEventListener eventListener;
+    private View.OnClickListener eventListener;
 
-    public void setManageEventListener(RoomManageEventListener eventListener) {
+    public void setEventListener(View.OnClickListener eventListener) {
         this.eventListener = eventListener;
     }
 
@@ -164,6 +164,8 @@ public class RoomGiftListDialog extends DialogFragment {
                 EaseUserUtils.setAvatar(context,gift.getGurl(),ivGiftThumb);
                 tvGiftName.setText(gift.getGname());
                 tvGiftPrice.setText(gift.getGprice()+"");
+                itemView.setTag(gift.getId());
+                itemView.setOnClickListener(eventListener);
             }
         }
     }
