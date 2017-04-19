@@ -72,6 +72,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
     @BindView(R.id.tv_username) TextView usernameView;
 
     @BindView(R.id.iv_avatar) EaseImageView ivAvatar;
+    @BindView(R.id.gift_image) ImageView giftImageView;
 
     protected String anchorId;
 
@@ -510,6 +511,11 @@ public abstract class LiveBaseActivity extends BaseActivity {
         RoomUserManagementDialog managementDialog = new RoomUserManagementDialog(chatroomId);
         managementDialog.show(getSupportFragmentManager(), "RoomUserManagementDialog");
     }
+
+    @OnClick(R.id.gift_image) void showGiftList(){
+                RoomUserManagementDialog managementDialog = new RoomUserManagementDialog(chatroomId);
+                managementDialog.show(getSupportFragmentManager(), "RoomUserManagementDialog");
+            }
 
     //@OnClick(R.id.present_image) void onPresentImageClick() {
     //  EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
